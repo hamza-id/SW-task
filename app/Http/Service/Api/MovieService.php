@@ -43,7 +43,7 @@ class MovieService
         $data = array();
         if ($movies) {
             foreach ($movies as $movie) {
-                $existingMovie = $this->model->with(['planets', 'starships', 'characters'])->where('episode_id', $movie['episode_id'])->first();
+                $existingMovie = $this->model->where('episode_id', $movie['episode_id'])->first();
 
                 if ($existingMovie)
                     $data[] = $existingMovie;
@@ -60,6 +60,9 @@ class MovieService
                 }
             }
         }
+
+        //sorting collection into asc order
+        $data = collect($data)->sortBy('id')->values()->all();
         return $data;
     }
 

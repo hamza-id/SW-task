@@ -33,7 +33,7 @@ class MovieController extends Controller
                 $movieService = new MovieService();
                 $data         = $movieService->fetchFromTitle($title);
             } else {
-                //when there is not query param then fetch new listing only
+                //when there is no query param then fetch new listing only
                 $starWarApi     = new StarWarApi();
                 $starWarsMovies = $starWarApi->fetchMovies();
 
