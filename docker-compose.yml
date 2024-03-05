@@ -1,0 +1,52 @@
+version: "3.7"
+
+services:
+  app:
+    build:
+      args:
+        user: hamza
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: sw-task
+    container_name: sw-task-app
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - db
+    command: sh -c "sleep 15  && composer install && php artisan key:generate && php artisan optimize && php artisan migrate && php artisan passport:client --personal --no-interaction && php artisan passport:key --force && php artisan serve --host=0.0.0.0 --port=9000"
+    ports:
+      - "9000:9000"
+    networks:
+      - sw-task
+
+  db:
+    image: mysql:8.0
+    container_name: sw-task-db
+    environment:
+      MYSQL_DATABASE: sw-task
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_PASSWORD: password
+      MYSQL_USER: user
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./mysql:/docker-entrypoint-initdb.d
+    networks:
+      - sw-task
+
+  nginx:
+    image: nginx:alpine
+    container_name: sw-task-nginx
+    ports:
+      - 8000:80
+    volumes:
+      - ./:/var/www
+      - ./nginx:/etc/nginx/conf.d/
+    networks:
+      - sw-task
+
+networks:
+  sw-task:
+    driver: bridge
