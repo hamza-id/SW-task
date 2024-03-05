@@ -38,7 +38,7 @@ class MovieController extends Controller
                 $starWarsMovies = $starWarApi->fetchMovies();
 
                 $movieService = new MovieService();
-                $data         = $movieService->createOrFetchMovies($starWarsMovies, $title);
+                $data         = $movieService->createOrFetchMovies($starWarsMovies);
             }
         } catch (Exception $e) {
             Log::error($e);

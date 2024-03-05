@@ -38,25 +38,31 @@ class MovieService
         return false;
     }
 
-    public function createOrFetchMovies($movies, $title)
+    public function createOrFetchMovies($movies)
     {
+        $data = array();
         if ($movies) {
             foreach ($movies as $movie) {
-                $this->model->updateOrCreate(
-                    ['title' => $movie['title']],
-                    [
+                $existingMovie = $this->model->with(['planets', 'starships', 'characters'])->where('episode_id', $movie['episode_id'])->first();
+
+                if ($existingMovie)
+                    $data[] = $existingMovie;
+                else {
+                    $data[] = $this->model->create([
+                        'title'         => $movie['title'],
                         'episode_id'    => $movie['episode_id'],
                         'opening_crawl' => $movie['opening_crawl'],
                         'director'      => $movie['director'],
                         'producer'      => $movie['producer'],
                         'release_date'  => $movie['release_date'],
                         'url'           => $movie['url'],
-                    ]
-                );
+                    ]);
+                }
             }
         }
-        return $movies;
+        return $data;
     }
+
 
     public function updateRelatedData($movie)
     {
