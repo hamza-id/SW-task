@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('gravity');
             $table->string('terrain');
             $table->integer('surface_water');
-            $table->bigInteger('population');
+            $table->string('population');
             $table->timestamps();
         });
     }

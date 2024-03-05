@@ -9,6 +9,9 @@ class Movie extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'title', 'episode_id', 'opening_crawl', 'director', 'producer', 'release_date', 'url'
+    ];
     public function characters()
     {
         return $this->belongsToMany(Character::class);
@@ -16,7 +19,7 @@ class Movie extends Model
 
     public function planets()
     {
-        return $this->belongsToMany(Planet::class);
+        return $this->belongsToMany(Planet::class, 'movie_planet');
     }
 
     public function starships()
