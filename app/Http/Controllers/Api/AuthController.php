@@ -23,9 +23,8 @@ class AuthController extends Controller
 
         $input = $request->all();
         $input['password']  = bcrypt($input['password']);
-        $user               = User::create($input);
+        $data               = User::create($input);
 
-        $data['token']      = $user->createToken('sw-task')->accessToken;
         $data['message']    = "User Registration Successfully!";
         return response()->json(['data' => $data], 200);
     }
