@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,4 +30,10 @@ Route::group([
 
         Route::apiResource('movies', 'MovieController')->except(['store']);
     });
+});
+
+Route::fallback(function () {
+    return response()->json([
+        'error' => 'Route not found.'
+    ], Response::HTTP_NOT_FOUND);
 });
