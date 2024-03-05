@@ -48,7 +48,7 @@ class AuthController extends Controller
             if (Auth::attempt($credentials)) {
                 $data['token'] = auth()->user()->createToken('sw-task')->accessToken;
             } else
-                $message = 'Email or password doesnot match!';
+                $message = 'Email or password does not match!';
         } catch (Exception $e) {
             Log::error($e);
             $error   = true;
