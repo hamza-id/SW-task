@@ -98,7 +98,7 @@ class MovieService
 
     public function update($id, $request)
     {
-        $movie = $this->fetch($id);
+        $movie = $this->fetch($id, ['planets', 'starships', 'characters']);
         $movie->fill($request->only([
             'title',
             'director',
@@ -108,5 +108,6 @@ class MovieService
             'producer'
         ]));
         $movie->save();
+        return $movie;
     }
 }

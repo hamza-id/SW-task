@@ -26,12 +26,11 @@ class MovieUpdate extends FormRequest
     public function rules()
     {
         return [
-            'title'         => 'sometimes|required|string',
-            'director'      => 'sometimes|required|string',
-            'release_date'  => 'sometimes|required|date',
-            'episode_id'    => 'sometimes|required|integer',
-            'opening_crawl' => 'nullable|string',
-            'producer'      => 'nullable|string',
+            'title'         => 'required|required|string',
+            'opening_crawl' => 'required|string',
+            'director'      => 'required|required|string',
+            'producer'      => 'required|string',
+            'release_date'  => 'required|required|date|date_format:Y-m-d',
         ];
     }
 

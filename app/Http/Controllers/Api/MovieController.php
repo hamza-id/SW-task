@@ -73,7 +73,7 @@ class MovieController extends Controller
     {
         $data    = array();
         $error   = false;
-        $message = 'Succesfully fetch record.';
+        $message = 'Succesfully updated record.';
 
         try {
             $movieService = new MovieService();
