@@ -2,67 +2,86 @@
 
 namespace Tests\Api\Movie;
 
+use App\Http\Controllers\Api\MovieController;
+use App\Http\Service\Api\MovieService;
 use Tests\TestCase;
-use App\Models\Movie;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class MovieControllerTest extends TestCase
 {
-    use RefreshDatabase;
-
-    /** @test */
-    public function it_can_fetch_movies_from_title()
+    public function test_index_with_title()
     {
-        // Assuming there are movies in the database
-        $response = $this->getJson('/api/movies?title=Star Wars');
+        $request = $this->createRequest(['title' => 'A New Hope']);
+        $movieServiceMock = $this->createMock(MovieService::class);
+        $movieServiceMock->expects($this->once())->method('fetchFromTitle')
+            ->with('A New Hope')->willReturn(['movie_data']);
+
+        $controller = new MovieController();
+        $response   = $controller->index($request);
+
         $response->assertStatus(200)
-                 ->assertJson(['error' => false]);
-        // You can add more assertions based on your expected response
+            ->assertExactJson([
+                'code'    => 200,
+                'message' => 'Successfully fetch records.'
+            ]);
     }
 
-    /** @test */
-    public function it_can_fetch_movies_when_no_title_provided()
+    public function test_index_without_title()
     {
-        // Assuming there are movies in the database
-        $response = $this->getJson('/api/movies');
+        $request = $this->createRequest();
+        $movieServiceMock = $this->createMock(MovieService::class);
+        $movieServiceMock->expects($this->once())
+            ->method('createOrFetchMovies')
+            ->with(['movies_data'])
+            ->willReturn(['created_movies_data']);
+
+        $controller = new MovieController();
+        $response   = $controller->index($request);
+
         $response->assertStatus(200)
-                 ->assertJson(['error' => false]);
-        // You can add more assertions based on your expected response
+            ->assertExactJson([
+                'code'    => 200,
+                'message' => 'Successfully fetch records.'
+            ]);
     }
 
-    /** @test */
-    public function it_can_show_movie_details()
+    public function test_show()
     {
-        $movie = factory(Movie::class)->create();
+        $movieServiceMock = $this->createMock(MovieService::class);
+        $movieServiceMock->expects($this->once())
+            ->method('fetch')
+            ->with(1, ['planets', 'starships', 'characters'])
+            ->willReturn(['movie_data']);
 
-        $response = $this->getJson('/api/movies/' . $movie->id);
+        $controller = new MovieController();
+        $response   = $controller->show(2);
+
         $response->assertStatus(200)
-                 ->assertJson(['error' => false]);
-        // You can add more assertions based on your expected response
+            ->assertExactJson([
+                'code'    => 200,
+                'message' => 'Successfully fetch record.'
+            ]);
     }
 
-    /** @test */
-    public function it_can_update_movie_details()
+    public function test_destroy_success()
     {
-        $movie = factory(Movie::class)->create();
+        $movieServiceMock = $this->createMock(MovieService::class);
+        $movieServiceMock->expects($this->once())
+            ->method('destroy')
+            ->with(1)
+            ->willReturn(true);
 
-        $response = $this->putJson('/api/movies/' . $movie->id, [
-            // Your update data
-        ]);
+        $controller = new MovieController();
+        $response = $controller->destroy(2);
 
         $response->assertStatus(200)
-                 ->assertJson(['error' => false]);
-        // You can add more assertions based on your expected response
+            ->assertExactJson([
+                'code'    => 200,
+                'message' => 'The record is successfully deleted.'
+            ]);
     }
 
-    /** @test */
-    public function it_can_destroy_movie()
+    private function createRequest($parameters = [])
     {
-        $movie = factory(Movie::class)->create();
-
-        $response = $this->deleteJson('/api/movies/' . $movie->id);
-        $response->assertStatus(200)
-                 ->assertJson(['error' => false]);
-        // You can add more assertions based on your expected response
+        return new \Illuminate\Http\Request($parameters);
     }
 }
